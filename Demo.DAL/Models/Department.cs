@@ -11,7 +11,7 @@ namespace Demo.DAL.Models
         [MaxLength(50)]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Code is required")]
         public string Code { get; set; }
 
         public DateTime DateOfCreation { get; set; }
