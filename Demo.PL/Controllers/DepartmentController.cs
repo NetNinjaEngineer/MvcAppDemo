@@ -82,10 +82,21 @@ namespace Demo.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(Department department)
+        public async Task<IActionResult> Delete([FromRoute] int id, Department department)
         {
-            await _departmentRepository.Delete(department);
-            return RedirectToAction(nameof(Index));
+            if (id != department.Id)
+                return BadRequest();
+            try
+            {
+                await _departmentRepository.Delete(department);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (System.Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(department);
+            }
+
         }
     }
 }

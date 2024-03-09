@@ -3,9 +3,11 @@
     ViewData["Title"] = "Delete";
 }
 
+<div asp-validation-summary="All" class="text-danger"></div>
+
 <h1>Are you sure you want to delete @Model.Name Department ?</h1>
 <br />
-<form asp-action="DeleteConfirmed">
+<form asp-action="Delete">
     <div class="form-group">
         <label class="col-form-label" asp-for="Code"></label>
         <input readonly class="form-control" asp-for="Code" />
