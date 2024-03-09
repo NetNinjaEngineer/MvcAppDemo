@@ -12,17 +12,20 @@ namespace Demo.PL.Controllers
         public DepartmentController(IDepartmentRepository departmentRepository)
             => _departmentRepository = departmentRepository;
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _departmentRepository.GetAll());
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create([FromForm] Department department)
         {
             if (ModelState.IsValid)
@@ -34,40 +37,54 @@ namespace Demo.PL.Controllers
             return View(department);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (id is null)
                 return BadRequest();
             var department = await _departmentRepository.GetById(id.Value);
             if (department is null)
                 return NotFound();
-            return View(department);
+            return View(viewName, department);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
-        {
-            if (id is null)
-                return BadRequest();
-            var department = await _departmentRepository.GetById(id.Value);
-            if (department is null)
-                return NotFound();
-            return View(department);
-        }
+            => await Details(id, "Edit");
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Department department)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Department department, [FromRoute] int id)
         {
-            if (department is null)
+            if (id != department.Id)
                 return BadRequest();
 
-            var existDepartment = await _departmentRepository.GetById(department.Id);
-            if (existDepartment is null)
-                return NotFound();
-            existDepartment.Code = department.Code;
-            existDepartment.DateOfCreation = department.DateOfCreation;
-            existDepartment.Name = department.Name;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _departmentRepository.Update(department);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (System.Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
 
-            await _departmentRepository.Update(existDepartment);
+            return View(department);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+            => await Details(id, "Delete");
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Department department)
+        {
+            await _departmentRepository.Delete(department);
             return RedirectToAction(nameof(Index));
         }
     }
