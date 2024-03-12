@@ -49,9 +49,7 @@
                     <td>@employee.IsActive</td>
                     <td>@employee.HireDate</td>
                     <td>@employee.CreatedAt</td>
-                    <td><a asp-action="Details" asp-route-id="@employee.Id"><i class="fas fa-eye"></i></a></td>
-                    <td><a asp-action="Edit" asp-route-id="@employee.Id"><i class="fas fa-edit"></i></a></td>
-                    <td><a asp-action="Delete" asp-route-id="@employee.Id"><i class="fas fa-trash"></i></a></td>
+                    <partial name="_ButtonsPartialView" model="@employee.Id" />
                 </tr>
             }
         </tbody>
