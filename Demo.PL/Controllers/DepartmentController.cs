@@ -29,7 +29,9 @@ namespace Demo.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                _departmentRepository.Create(department);
+                var result = _departmentRepository.Create(department);
+                if (result > 0)
+                    TempData["Message"] = "Department created successfully.";
                 return RedirectToAction(nameof(Index));
             }
 

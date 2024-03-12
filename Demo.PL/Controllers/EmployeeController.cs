@@ -16,7 +16,8 @@ namespace Demo.PL.Controllers
         public IActionResult Index()
         {
             var employees = employeeRepository.GetAll();
-
+            ViewData["Message"] = "Hello from viewData";
+            ViewBag.Message = "Hello from viewBag";
             return View(employees);
         }
 
@@ -32,7 +33,9 @@ namespace Demo.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                employeeRepository.Create(employee);
+                var result = employeeRepository.Create(employee);
+                if (result > 0)
+                    TempData["Message"] = "Employee created successfully";
                 return RedirectToAction(nameof(Index));
             }
 

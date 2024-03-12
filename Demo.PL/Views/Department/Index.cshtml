@@ -3,6 +3,11 @@
     ViewData["Title"] = "All Departments";
 }
 
+@if(TempData["Message"] is not null)
+{
+    <div class="successMessage alert alert-success"> @TempData["Message"]</div>
+}
+
 <a class="btn btn-primary" asp-action="Create">Create New Department</a>
 
 @if(Model.Count() > 0)
@@ -40,4 +45,8 @@ else
     <div class="mt-5 alert alert-warning">
         <h4>There is no departments !!!</h4>
     </div>
+}
+
+@section Scripts {
+    <script src="~/js/siteFeatures.js"></script>
 }
