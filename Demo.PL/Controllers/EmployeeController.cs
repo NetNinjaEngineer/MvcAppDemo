@@ -4,17 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.PL.Controllers
 {
-    public class DepartmentController : Controller
+    public class EmployeeController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IEmployeeRepository employeeRepository;
 
-        public DepartmentController(IDepartmentRepository departmentRepository)
-            => _departmentRepository = departmentRepository;
+        public EmployeeController(IEmployeeRepository employeeRepository)
+        {
+            this.employeeRepository = employeeRepository;
+        }
 
-        [HttpGet]
         public IActionResult Index()
         {
-            return View(_departmentRepository.GetAll());
+            var employees = employeeRepository.GetAll();
+
+            return View(employees);
         }
 
         [HttpGet]
@@ -25,15 +28,15 @@ namespace Demo.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([FromForm] Department department)
+        public IActionResult Create([FromForm] Employee employee)
         {
             if (ModelState.IsValid)
             {
-                _departmentRepository.Create(department);
+                employeeRepository.Create(employee);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(department);
+            return View(employee);
         }
 
         [HttpGet]
@@ -41,10 +44,10 @@ namespace Demo.PL.Controllers
         {
             if (id is null)
                 return BadRequest();
-            var department = _departmentRepository.Get(id.Value);
-            if (department is null)
+            var employee = employeeRepository.Get(id.Value);
+            if (employee is null)
                 return NotFound();
-            return View(viewName, department);
+            return View(viewName, employee);
         }
 
         [HttpGet]
@@ -53,16 +56,16 @@ namespace Demo.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Department department, [FromRoute] int id)
+        public IActionResult Edit(Employee employee, [FromRoute] int id)
         {
-            if (id != department.Id)
+            if (id != employee.Id)
                 return BadRequest();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _departmentRepository.Update(department);
+                    employeeRepository.Update(employee);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (System.Exception ex)
@@ -71,7 +74,7 @@ namespace Demo.PL.Controllers
                 }
             }
 
-            return View(department);
+            return View(employee);
 
         }
 
@@ -81,19 +84,19 @@ namespace Demo.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, Department department)
+        public IActionResult Delete([FromRoute] int id, Employee employee)
         {
-            if (id != department.Id)
+            if (id != employee.Id)
                 return BadRequest();
             try
             {
-                _departmentRepository.Delete(department);
+                employeeRepository.Delete(employee);
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                return View(department);
+                return View(employee);
             }
 
         }

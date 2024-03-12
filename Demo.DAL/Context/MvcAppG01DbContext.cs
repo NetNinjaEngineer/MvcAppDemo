@@ -5,10 +5,9 @@ namespace Demo.DAL.Context
 {
     public class MvcAppG01DbContext : DbContext
     {
-        public MvcAppG01DbContext(DbContextOptions<MvcAppG01DbContext> options) : base(options)
-        {
-        }
+        public MvcAppG01DbContext(DbContextOptions<MvcAppG01DbContext> options) : base(options) { }
 
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
     }
 }
