@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model EmployeeViewModel
 <div class="form-group">
     <label class="col-form-label" asp-for="Name"></label>
     <input readonly class="form-control" asp-for="Name" />
@@ -39,8 +39,9 @@
     <input readonly class="form-control" asp-for="HireDate" />
     <span asp-validation-for="HireDate" class="text-danger"></span>
 </div>
-<div class="form-group">
+@* <div class="form-group">
     <label class="col-form-label" asp-for="CreatedAt"></label>
     <input readonly class="form-control" asp-for="CreatedAt" />
     <span asp-validation-for="CreatedAt" class="text-danger"></span>
 </div>
+ *@

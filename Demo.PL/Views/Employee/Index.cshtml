@@ -1,6 +1,11 @@
-﻿@model IEnumerable<Employee>
+﻿@model IEnumerable<EmployeeViewModel>
 @{
     ViewData["Title"] = "Index";
+}
+
+@{
+    var vDataMessage = ViewData["Message"] as string; // Requires Casting - StronglyTyped
+
 }
 
 @* <div class="alert alert-success">@ViewData["Message"]</div> *@
@@ -26,11 +31,12 @@
                 <td>@Html.DisplayNameFor(d => d.Address)</td>
                 <td>@Html.DisplayNameFor(d => d.Age)</td>
                 <td>@Html.DisplayNameFor(d => d.Salary)</td>
+                <td>@Html.DisplayNameFor(d => d.Department)</td>
                 <td>@Html.DisplayNameFor(d => d.Email)</td>
                 <td>@Html.DisplayNameFor(d => d.PhoneNumber)</td>
                 <td>@Html.DisplayNameFor(d => d.IsActive)</td>
                 <td>@Html.DisplayNameFor(d => d.HireDate)</td>
-                <td>@Html.DisplayNameFor(d => d.CreatedAt)</td>
+@*                 <td>@Html.DisplayNameFor(d => d.CreatedAt)</td> *@
                 <td>Details</td>
                 <td>Update</td>
                 <td>Delete</td>
@@ -43,13 +49,23 @@
                     <td>@employee.Name</td>
                     <td>@employee.Address</td>
                     <td>@employee.Age</td>
-                    <td>@employee.Salary</td>
-                    <td>@employee.Email</td>
+                    <td>@Html.DisplayFor(e => employee.Salary)</td>
+                    <td>@Html.DisplayFor(e => employee.Department.Name)</td>
+                    <td>@Html.DisplayFor(e => employee.Email)</td>
                     <td>@employee.PhoneNumber</td>
-                    <td>@employee.IsActive</td>
+                    <td>
+                        @if (employee.IsActive)
+                        {
+                            <i class="fa-solid fa-circle" style="color: green"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-circle" style="color: red"></i>
+                        }
+                    </td>
                     <td>@employee.HireDate</td>
-                    <td>@employee.CreatedAt</td>
-                    <partial name="_ButtonsPartialView" model="@employee.Id" />
+@*                     <td>@employee.CreatedAt</td>
+ *@                    <partial name="_ButtonsPartialView" model="@employee.Id" />
                 </tr>
             }
         </tbody>

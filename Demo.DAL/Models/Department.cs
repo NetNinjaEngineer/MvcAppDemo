@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Demo.DAL.Models
 {
@@ -15,5 +17,8 @@ namespace Demo.DAL.Models
         public string Code { get; set; }
 
         public DateTime DateOfCreation { get; set; }
+
+        [InverseProperty("Department")]
+        public ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
     }
 }

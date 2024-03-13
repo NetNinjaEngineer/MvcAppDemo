@@ -1,3 +1,4 @@
+using AutoMapper;
 using Demo.BL.Interfaces;
 using Demo.BL.Repositories;
 using Demo.DAL.Context;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 namespace Demo.PL
 {
@@ -26,9 +28,11 @@ namespace Demo.PL
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         }
 
