@@ -8,7 +8,7 @@ namespace Demo.PL.Profiles
     {
         public EmployeeProfile()
         {
-            CreateMap<EmployeeViewModel, Employee>();
+            CreateMap<EmployeeViewModel, Employee>().ReverseMap();
         }
     }
 }

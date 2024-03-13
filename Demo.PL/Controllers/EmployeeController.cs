@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Demo.BL.Interfaces;
 using Demo.DAL.Models;
+using Demo.PL.Helpers;
 using Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -9,24 +10,22 @@ namespace Demo.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository employeeRepository;
-        private readonly IDepartmentRepository departmentRepository;
         private readonly IMapper mapper;
+        private readonly IUnitOfWork unitOfWork;
 
-        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository, IMapper mapper)
+        public EmployeeController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            this.employeeRepository = employeeRepository;
-            this.departmentRepository = departmentRepository;
             this.mapper = mapper;
+            this.unitOfWork = unitOfWork;
         }
 
         public IActionResult Index(string SearchValue)
         {
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchValue))
-                employees = employeeRepository.GetAll();
+                employees = unitOfWork.EmployeeRepository.GetAll();
             else
-                employees = employeeRepository.GetEmployeesByName(SearchValue);
+                employees = unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
 
             ViewData["Message"] = "Hello from viewData";
             ViewBag.Message = "Hello from viewBag";
@@ -39,7 +38,7 @@ namespace Demo.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Departments = departmentRepository.GetAll();
+            ViewBag.Departments = unitOfWork.DepartmentRepository.GetAll();
             return View();
         }
 
@@ -49,8 +48,11 @@ namespace Demo.PL.Controllers
         {
             if (ModelState.IsValid)
             {
+                employeeVM.ImageName = Utility.UploadFile(employeeVM.Image, "Images");
+
                 var mappedEmployee = mapper.Map<Employee>(employeeVM);
-                var result = employeeRepository.Create(mappedEmployee);
+                unitOfWork.EmployeeRepository.Create(mappedEmployee);
+                var result = unitOfWork.SaveChanges();
                 if (result > 0)
                     TempData["Message"] = "Employee created successfully";
                 return RedirectToAction(nameof(Index));
@@ -64,7 +66,7 @@ namespace Demo.PL.Controllers
         {
             if (id is null)
                 return BadRequest();
-            var employee = employeeRepository.Get(id.Value);
+            var employee = unitOfWork.EmployeeRepository.Get(id.Value);
             var employeeVM = mapper.Map<Employee, EmployeeViewModel>(employee);
             if (employee is null)
                 return NotFound();
@@ -87,7 +89,8 @@ namespace Demo.PL.Controllers
                 try
                 {
                     var mappedEmployee = mapper.Map<Employee>(employeeVM);
-                    employeeRepository.Update(mappedEmployee);
+                    unitOfWork.EmployeeRepository.Update(mappedEmployee);
+                    unitOfWork.SaveChanges();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (System.Exception ex)
@@ -113,7 +116,8 @@ namespace Demo.PL.Controllers
             try
             {
                 var mappedEmployee = mapper.Map<Employee>(employeeVM);
-                employeeRepository.Delete(mappedEmployee);
+                unitOfWork.EmployeeRepository.Delete(mappedEmployee);
+                unitOfWork.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)

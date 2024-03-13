@@ -25,6 +25,8 @@ namespace Demo.DAL.Models
 
         public string PhoneNumber { get; set; }
 
+        public string ImageName { get; set; }
+
         public DateTime HireDate { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

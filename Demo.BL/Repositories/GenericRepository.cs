@@ -14,16 +14,14 @@ namespace Demo.BL.Repositories
         public GenericRepository(MvcAppG01DbContext context)
             => _context = context;
 
-        public int Create(T entity)
+        public void Create(T entity)
         {
             _context.Add(entity);
-            return _context.SaveChanges();
         }
 
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Remove(entity);
-            return _context.SaveChanges();
         }
 
         public T Get(int id)
@@ -36,10 +34,9 @@ namespace Demo.BL.Repositories
             return _context.Set<T>().ToList();
         }
 
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _context.Update(entity);
-            return _context.SaveChanges();
         }
     }
 }

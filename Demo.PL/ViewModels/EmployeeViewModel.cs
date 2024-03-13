@@ -1,4 +1,5 @@
 ﻿using Demo.DAL.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -29,6 +30,10 @@ namespace Demo.PL.ViewModels
         [EmailAddress]
         [Required]
         public string Email { get; set; }
+
+        public IFormFile Image { get; set; }
+
+        public string ImageName { get; set; }
 
         [Phone]
         public string PhoneNumber { get; set; }

@@ -6,8 +6,8 @@ namespace Demo.BL.Interfaces
     {
         T Get(int id);
         IEnumerable<T> GetAll();
-        int Create(T entity);
-        int Update(T entity);
-        int Delete(T entity);
+        void Create(T entity);
+        void Update(T entity);
+        void Delete(T entity);
     }
 }
