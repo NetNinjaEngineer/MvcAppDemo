@@ -20,13 +20,20 @@ namespace Demo.PL.Controllers
             this.mapper = mapper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string SearchValue)
         {
-            var employees = employeeRepository.GetAll();
+            IEnumerable<Employee> employees;
+            if (string.IsNullOrEmpty(SearchValue))
+                employees = employeeRepository.GetAll();
+            else
+                employees = employeeRepository.GetEmployeesByName(SearchValue);
+
             ViewData["Message"] = "Hello from viewData";
             ViewBag.Message = "Hello from viewBag";
+
             var mappedEmployeesVM = mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
             return View(mappedEmployeesVM);
+
         }
 
         [HttpGet]

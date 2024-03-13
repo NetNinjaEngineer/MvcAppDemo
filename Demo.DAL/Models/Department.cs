@@ -9,11 +9,11 @@ namespace Demo.DAL.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
+        [Required]
         [MaxLength(50)]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Code is required")]
+        [Required]
         public string Code { get; set; }
 
         public DateTime DateOfCreation { get; set; }
