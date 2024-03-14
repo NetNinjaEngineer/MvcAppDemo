@@ -26,11 +26,11 @@
     <br />
 
     <div class="m-2">
-        <form asp-action="Index" class="row offset-2">
-            <div class="col-8">
+        <form asp-action="Index" class="row offset-2" enctype="multipart/form-data">
+            <div class="col-8 pl-0">
                 <input type="text" name="SearchValue" placeholder="Employee's Name " class="form-control" />
             </div>
-            <div class="col-4">
+            <div class="col-4 pr-0">
                 <input type="submit" value="Search" class="btn btn-outline-info"/>
             </div>
         </form>
@@ -39,6 +39,7 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
+                <td>@Html.DisplayNameFor(d => d.Image)</td>
                 <td>@Html.DisplayNameFor(d => d.Name)</td>
                 <td>@Html.DisplayNameFor(d => d.Address)</td>
                 <td>@Html.DisplayNameFor(d => d.Age)</td>
@@ -58,6 +59,9 @@
             @foreach (var employee in Model)
             {
                 <tr>
+                    <td>
+                        <img class="rounded-circle" height="60" width="60" src="~/Files/Images/@employee.ImageName" alt="@employee.ImageName" />
+                    </td>
                     <td>@employee.Name</td>
                     <td>@employee.Address</td>
                     <td>@employee.Age</td>

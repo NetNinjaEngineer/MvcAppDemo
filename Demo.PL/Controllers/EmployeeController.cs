@@ -64,6 +64,7 @@ namespace Demo.PL.Controllers
         [HttpGet]
         public IActionResult Details(int? id, string viewName = "Details")
         {
+            ViewBag.Departments = unitOfWork.DepartmentRepository.GetAll();
             if (id is null)
                 return BadRequest();
             var employee = unitOfWork.EmployeeRepository.Get(id.Value);

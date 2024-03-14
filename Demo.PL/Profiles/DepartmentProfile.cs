@@ -8,7 +8,7 @@ namespace Demo.PL.Profiles
     {
         public DepartmentProfile()
         {
-            CreateMap<DepartmentViewModel, Department>();
+            CreateMap<DepartmentViewModel, Department>().ReverseMap();
         }
     }
 }
