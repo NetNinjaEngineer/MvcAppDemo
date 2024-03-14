@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<EmployeeViewModel>
 @{
     ViewData["Title"] = "Index";
+    var nameSortParam = ViewData["NameSortParm"] as string;
+    var ageSortParam = ViewData["AgeSortParm"] as string;
 }
 
 @{
@@ -40,9 +42,13 @@
         <thead>
             <tr>
                 <td>@Html.DisplayNameFor(d => d.Image)</td>
-                <td>@Html.DisplayNameFor(d => d.Name)</td>
+                <td>
+                    <a asp-action="Index" name="sortOrder" asp-route-sortOrder="@nameSortParam">@Html.DisplayNameFor(d => d.Name)</a>
+                </td>
                 <td>@Html.DisplayNameFor(d => d.Address)</td>
-                <td>@Html.DisplayNameFor(d => d.Age)</td>
+                <td>
+                    <a asp-action="Index" name="sortOrder" asp-route-sortOrder="@ageSortParam">@Html.DisplayNameFor(d => d.Age)</a>
+                </td>
                 <td>@Html.DisplayNameFor(d => d.Salary)</td>
                 <td>@Html.DisplayNameFor(d => d.Department)</td>
                 <td>@Html.DisplayNameFor(d => d.Email)</td>
@@ -60,7 +66,7 @@
             {
                 <tr>
                     <td>
-                        <img class="rounded-circle" height="60" width="60" src="~/Files/Images/@employee.ImageName" alt="@employee.ImageName" />
+                        <img onclick="enlargeEmployeeImage()" class="employeeImage rounded-circle" height="60" width="60" src="~/Files/Images/@employee.ImageName" alt="@employee.ImageName" />
                     </td>
                     <td>@employee.Name</td>
                     <td>@employee.Address</td>
@@ -94,5 +100,5 @@ else
     </div>
 }
 @section Scripts {
-    <script src="~/js/siteFeatures.js"></script>
+    <script src="~/js/site.js"></script>
 }

@@ -4,7 +4,9 @@ using Demo.DAL.Models;
 using Demo.PL.Helpers;
 using Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Demo.PL.Controllers
 {
@@ -19,7 +21,7 @@ namespace Demo.PL.Controllers
             this.unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(string SearchValue)
+        public IActionResult Index(string SearchValue, string sortOrder)
         {
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchValue))
@@ -27,18 +29,27 @@ namespace Demo.PL.Controllers
             else
                 employees = unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
 
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["AgeSortParm"] = sortOrder == "Age" ? "age_desc" : "Age";
+
+            employees = sortOrder switch
+            {
+                "name_desc" => employees.OrderByDescending(e => e.Name),
+                "age_desc" => employees.OrderByDescending(e => e.Age),
+                _ => employees.OrderBy(e => e.Name),
+            };
             ViewData["Message"] = "Hello from viewData";
             ViewBag.Message = "Hello from viewBag";
 
             var mappedEmployeesVM = mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
             return View(mappedEmployeesVM);
-
         }
+
 
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Departments = unitOfWork.DepartmentRepository.GetAll();
+            ViewBag.Departments = PassDepartmentsToViewsPartial();
             return View();
         }
 
@@ -48,7 +59,8 @@ namespace Demo.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                employeeVM.ImageName = Utility.UploadFile(employeeVM.Image, "Images");
+                if (employeeVM.Image is not null && employeeVM.Image.Length > 0)
+                    employeeVM.ImageName = Utility.UploadFile(employeeVM.Image, "Images");
 
                 var mappedEmployee = mapper.Map<Employee>(employeeVM);
                 unitOfWork.EmployeeRepository.Create(mappedEmployee);
@@ -64,7 +76,7 @@ namespace Demo.PL.Controllers
         [HttpGet]
         public IActionResult Details(int? id, string viewName = "Details")
         {
-            ViewBag.Departments = unitOfWork.DepartmentRepository.GetAll();
+            ViewBag.Departments = PassDepartmentsToViewsPartial();
             if (id is null)
                 return BadRequest();
             var employee = unitOfWork.EmployeeRepository.Get(id.Value);
@@ -76,7 +88,9 @@ namespace Demo.PL.Controllers
 
         [HttpGet]
         public IActionResult Edit(int? id)
-            => Details(id, "Edit");
+        {
+            return Details(id, "Edit");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -89,6 +103,12 @@ namespace Demo.PL.Controllers
             {
                 try
                 {
+                    if (employeeVM.Image?.Length > 0 && employeeVM.Image is not null)
+                    {
+                        var imageName = Utility.UploadFile(employeeVM.Image, "Images");
+                        employeeVM.ImageName = imageName;
+                    }
+
                     var mappedEmployee = mapper.Map<Employee>(employeeVM);
                     unitOfWork.EmployeeRepository.Update(mappedEmployee);
                     unitOfWork.SaveChanges();
@@ -106,7 +126,9 @@ namespace Demo.PL.Controllers
 
         [HttpGet]
         public IActionResult Delete(int id)
-            => Details(id, "Delete");
+        {
+            return Details(id, "Delete");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -118,7 +140,9 @@ namespace Demo.PL.Controllers
             {
                 var mappedEmployee = mapper.Map<Employee>(employeeVM);
                 unitOfWork.EmployeeRepository.Delete(mappedEmployee);
-                unitOfWork.SaveChanges();
+                var result = unitOfWork.SaveChanges();
+                if (result > 0)
+                    Utility.DeleteFile(employeeVM.ImageName, "Images");
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)
@@ -127,6 +151,12 @@ namespace Demo.PL.Controllers
                 return View(employeeVM);
             }
 
+        }
+
+        private IEnumerable<Department> PassDepartmentsToViewsPartial()
+        {
+            var departments = unitOfWork.DepartmentRepository.GetAll();
+            return departments;
         }
     }
 }

@@ -28,7 +28,6 @@ namespace Demo.PL.ViewModels
         public bool IsActive { get; set; }
 
         [EmailAddress]
-        [Required]
         public string Email { get; set; }
 
         public IFormFile Image { get; set; }
