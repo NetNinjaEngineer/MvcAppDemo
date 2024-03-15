@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers
 {
@@ -21,11 +22,11 @@ namespace Demo.PL.Controllers
             this.unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(string SearchValue, string sortOrder)
+        public async Task<IActionResult> Index(string SearchValue, string sortOrder)
         {
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchValue))
-                employees = unitOfWork.EmployeeRepository.GetAll();
+                employees = await unitOfWork.EmployeeRepository.GetAllAsync();
             else
                 employees = unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
 
@@ -47,15 +48,15 @@ namespace Demo.PL.Controllers
 
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Departments = PassDepartmentsToViewsPartial();
+            ViewBag.Departments = await PassDepartmentsToViewsPartial();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([FromForm] EmployeeViewModel employeeVM)
+        public async Task<IActionResult> Create([FromForm] EmployeeViewModel employeeVM)
         {
             if (ModelState.IsValid)
             {
@@ -63,8 +64,8 @@ namespace Demo.PL.Controllers
                     employeeVM.ImageName = Utility.UploadFile(employeeVM.Image, "Images");
 
                 var mappedEmployee = mapper.Map<Employee>(employeeVM);
-                unitOfWork.EmployeeRepository.Create(mappedEmployee);
-                var result = unitOfWork.SaveChanges();
+                await unitOfWork.EmployeeRepository.CreateAsync(mappedEmployee);
+                var result = await unitOfWork.SaveChangesAsync();
                 if (result > 0)
                     TempData["Message"] = "Employee created successfully";
                 return RedirectToAction(nameof(Index));
@@ -74,12 +75,12 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
-            ViewBag.Departments = PassDepartmentsToViewsPartial();
+            ViewBag.Departments = await PassDepartmentsToViewsPartial();
             if (id is null)
                 return BadRequest();
-            var employee = unitOfWork.EmployeeRepository.Get(id.Value);
+            var employee = await unitOfWork.EmployeeRepository.GetAsync(id.Value);
             var employeeVM = mapper.Map<Employee, EmployeeViewModel>(employee);
             if (employee is null)
                 return NotFound();
@@ -87,14 +88,14 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return Details(id, "Edit");
+            return await Details(id, "Edit");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(EmployeeViewModel employeeVM, [FromRoute] int id)
+        public async Task<IActionResult> Edit(EmployeeViewModel employeeVM, [FromRoute] int id)
         {
             if (id != employeeVM.Id)
                 return BadRequest();
@@ -111,10 +112,10 @@ namespace Demo.PL.Controllers
 
                     var mappedEmployee = mapper.Map<Employee>(employeeVM);
                     unitOfWork.EmployeeRepository.Update(mappedEmployee);
-                    unitOfWork.SaveChanges();
+                    await unitOfWork.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
@@ -125,14 +126,14 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, EmployeeViewModel employeeVM)
+        public async Task<IActionResult> Delete([FromRoute] int id, EmployeeViewModel employeeVM)
         {
             if (id != employeeVM.Id)
                 return BadRequest();
@@ -140,12 +141,12 @@ namespace Demo.PL.Controllers
             {
                 var mappedEmployee = mapper.Map<Employee>(employeeVM);
                 unitOfWork.EmployeeRepository.Delete(mappedEmployee);
-                var result = unitOfWork.SaveChanges();
+                var result = await unitOfWork.SaveChangesAsync();
                 if (result > 0)
                     Utility.DeleteFile(employeeVM.ImageName, "Images");
                 return RedirectToAction(nameof(Index));
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View(employeeVM);
@@ -153,9 +154,9 @@ namespace Demo.PL.Controllers
 
         }
 
-        private IEnumerable<Department> PassDepartmentsToViewsPartial()
+        private async Task<IEnumerable<Department>> PassDepartmentsToViewsPartial()
         {
-            var departments = unitOfWork.DepartmentRepository.GetAll();
+            var departments = await unitOfWork.DepartmentRepository.GetAllAsync();
             return departments;
         }
     }
