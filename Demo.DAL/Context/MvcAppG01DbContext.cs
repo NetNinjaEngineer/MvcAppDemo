@@ -1,9 +1,10 @@
 ﻿using Demo.DAL.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.DAL.Context
 {
-    public class MvcAppG01DbContext : DbContext
+    public class MvcAppG01DbContext : IdentityDbContext
     {
         public MvcAppG01DbContext(DbContextOptions<MvcAppG01DbContext> options) : base(options) { }
 
