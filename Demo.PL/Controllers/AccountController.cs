@@ -1,4 +1,5 @@
 ﻿using Demo.DAL.Models;
+using Demo.PL.Helpers;
 using Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,7 @@ namespace Demo.PL.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var appUser = new ApplicationUser
+				ApplicationUser appUser = new ApplicationUser
 				{
 					FirstName = model.FName,
 					LastName = model.LName,
@@ -38,13 +39,13 @@ namespace Demo.PL.Controllers
 					Email = model.Email
 				};
 
-				var result = await _userManager.CreateAsync(appUser, model.Password);
+				IdentityResult result = await _userManager.CreateAsync(appUser, model.Password);
 
 				if (result.Succeeded)
 					return RedirectToAction(nameof(Login));
 
 				else
-					foreach (var error in result.Errors)
+					foreach (IdentityError error in result.Errors)
 						ModelState.AddModelError(string.Empty, error.Description);
 			}
 
@@ -79,6 +80,42 @@ namespace Demo.PL.Controllers
 			}
 
 			return View(model);
+
+		}
+
+
+		public new async Task<IActionResult> SignOut()
+		{
+			await _signInManager.SignOutAsync();
+			return RedirectToAction(nameof(Login));
+		}
+
+		public IActionResult ForgetPassword()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> SendEmail(ForgetPasswordViewModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				var applicationUser = await _userManager.FindByEmailAsync(model.Email);
+				if (applicationUser is not null)
+				{
+					// send email
+					var email = new Email
+					{
+						Subject = "Reset Password",
+						Body = "",
+						To = model.Email
+					};
+				}
+				else
+					ModelState.AddModelError(string.Empty, "Email is not exists");
+			}
+
+			return View(nameof(ForgetPassword), model);
 
 		}
 	}

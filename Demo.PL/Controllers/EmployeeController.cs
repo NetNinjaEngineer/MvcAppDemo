@@ -84,9 +84,9 @@ namespace Demo.PL.Controllers
                 if (employeeVM.Image is not null && employeeVM.Image.Length > 0)
                     employeeVM.ImageName = Utility.UploadFile(employeeVM.Image, "Images");
 
-                var mappedEmployee = mapper.Map<Employee>(employeeVM);
+                Employee mappedEmployee = mapper.Map<Employee>(employeeVM);
                 await unitOfWork.EmployeeRepository.CreateAsync(mappedEmployee);
-                var result = await unitOfWork.SaveChangesAsync();
+                int result = await unitOfWork.SaveChangesAsync();
                 if (result > 0)
                     TempData["Message"] = "Employee created successfully";
                 return RedirectToAction(nameof(Index));
@@ -101,8 +101,8 @@ namespace Demo.PL.Controllers
             ViewBag.Departments = await PassDepartmentsToViewsPartial();
             if (id is null)
                 return BadRequest();
-            var employee = await unitOfWork.EmployeeRepository.GetAsync(id.Value);
-            var employeeVM = mapper.Map<Employee, EmployeeViewModel>(employee);
+            Employee employee = await unitOfWork.EmployeeRepository.GetAsync(id.Value);
+            EmployeeViewModel employeeVM = mapper.Map<Employee, EmployeeViewModel>(employee);
             if (employee is null)
                 return NotFound();
             return View(viewName, employeeVM);
@@ -127,7 +127,7 @@ namespace Demo.PL.Controllers
                 {
                     if (employeeVM.Image?.Length > 0 && employeeVM.Image is not null)
                     {
-                        var imageName = Utility.UploadFile(employeeVM.Image, "Images");
+                        string imageName = Utility.UploadFile(employeeVM.Image, "Images");
                         employeeVM.ImageName = imageName;
                     }
 
@@ -160,7 +160,7 @@ namespace Demo.PL.Controllers
                 return BadRequest();
             try
             {
-                var mappedEmployee = mapper.Map<Employee>(employeeVM);
+                Employee mappedEmployee = mapper.Map<Employee>(employeeVM);
                 unitOfWork.EmployeeRepository.Delete(mappedEmployee);
                 var result = await unitOfWork.SaveChangesAsync();
                 if (result > 0)
