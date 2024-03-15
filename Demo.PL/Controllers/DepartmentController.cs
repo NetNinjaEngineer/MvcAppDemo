@@ -4,6 +4,7 @@ using Demo.DAL.Models;
 using Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers
 {
@@ -19,9 +20,9 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             return View(_mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(departments));
         }
 
@@ -33,13 +34,13 @@ namespace Demo.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([FromForm] DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Create([FromForm] DepartmentViewModel departmentVM)
         {
             if (ModelState.IsValid)
             {
                 var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                _unitOfWork.DepartmentRepository.Create(mappedDepartment);
-                var result = _unitOfWork.SaveChanges();
+                await _unitOfWork.DepartmentRepository.CreateAsync(mappedDepartment);
+                var result = await _unitOfWork.SaveChangesAsync();
                 if (result > 0)
                     TempData["Message"] = "Department created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -49,11 +50,11 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (id is null)
                 return BadRequest();
-            var department = _unitOfWork.DepartmentRepository.Get(id.Value);
+            var department = await _unitOfWork.DepartmentRepository.GetAsync(id.Value);
             if (department is null)
                 return NotFound();
             var departmentVM = _mapper.Map<Department, DepartmentViewModel>(department);
@@ -61,12 +62,12 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
-            => Details(id, "Edit");
+        public async Task<IActionResult> Edit(int? id)
+            => await Details(id, "Edit");
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(DepartmentViewModel departmentVM, [FromRoute] int id)
+        public async Task<IActionResult> Edit(DepartmentViewModel departmentVM, [FromRoute] int id)
         {
             if (id != departmentVM.Id)
                 return BadRequest();
@@ -77,7 +78,7 @@ namespace Demo.PL.Controllers
                 {
                     var department = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
                     _unitOfWork.DepartmentRepository.Update(department);
-                    _unitOfWork.SaveChanges();
+                    await _unitOfWork.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (System.Exception ex)
@@ -91,12 +92,12 @@ namespace Demo.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int id)
-            => Details(id, "Delete");
+        public async Task<IActionResult> Delete(int id)
+            => await Details(id, "Delete");
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Delete([FromRoute] int id, DepartmentViewModel departmentVM)
         {
             if (id != departmentVM.Id)
                 return BadRequest();
@@ -104,7 +105,7 @@ namespace Demo.PL.Controllers
             {
                 var department = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
                 _unitOfWork.DepartmentRepository.Delete(department);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (System.Exception ex)

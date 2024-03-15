@@ -8,6 +8,6 @@ namespace Demo.BL.Interfaces
 
         public IDepartmentRepository DepartmentRepository { get; set; }
 
-        Task<int> SaveChanges();
+        Task<int> SaveChangesAsync();
     }
 }

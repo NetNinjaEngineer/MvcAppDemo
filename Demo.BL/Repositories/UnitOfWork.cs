@@ -21,6 +21,6 @@ namespace Demo.BL.Repositories
 
         public void Dispose() => _context.Dispose();
 
-        public async Task<int> SaveChanges() => await _context.SaveChangesAsync();
+        public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
     }
 }

@@ -14,7 +14,7 @@ namespace Demo.BL.Repositories
         public GenericRepository(MvcAppG01DbContext context)
             => _context = context;
 
-        public async Task Create(T entity)
+        public async Task CreateAsync(T entity)
         {
             await _context.AddAsync(entity);
         }
@@ -24,10 +24,10 @@ namespace Demo.BL.Repositories
             _context.Remove(entity);
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T> GetAsync(int id)
             => await _context.Set<T>().FindAsync(id);
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             if (typeof(T) == typeof(Employee))
                 return (IEnumerable<T>)await _context.Employees.Include(e => e.Department).ToListAsync();
