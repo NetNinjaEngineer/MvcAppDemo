@@ -3,11 +3,11 @@ using System.Net.Mail;
 
 namespace Demo.PL.Helpers
 {
-	public static class EmailSettings
-	{
-		public static void SendEmail(Email email)
-		{
-			/*
+    public static class EmailSettings
+    {
+        public static void SendEmail(Email email)
+        {
+            /*
 				smtp.gmail.com
 
 				Requires SSL: Yes
@@ -18,11 +18,11 @@ namespace Demo.PL.Helpers
 
 				Port for TLS/STARTTLS: 587
 			 */
-			var smtpClient = new SmtpClient("smtp.gmail.com", 587);
-			smtpClient.EnableSsl = true;
-			smtpClient.Credentials = new NetworkCredential("me5260287@gmail.com", "");
-			smtpClient.Send("me5260287@gmail.com", email.To, email.Subject, email.Body);
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.EnableSsl = true;
+            smtpClient.Credentials = new NetworkCredential("me5260287@gmail.com", "mjyeiwzrjdlskqyn");
+            smtpClient.Send("me5260287@gmail.com", email.To, email.Subject, email.Body);
 
-		}
-	}
+        }
+    }
 }
