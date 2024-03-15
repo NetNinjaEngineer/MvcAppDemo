@@ -3,7 +3,7 @@ using Demo.DAL.Context;
 using Demo.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Demo.BL.Repositories
 {
@@ -14,9 +14,9 @@ namespace Demo.BL.Repositories
         public GenericRepository(MvcAppG01DbContext context)
             => _context = context;
 
-        public void Create(T entity)
+        public async Task Create(T entity)
         {
-            _context.Add(entity);
+            await _context.AddAsync(entity);
         }
 
         public void Delete(T entity)
@@ -24,14 +24,14 @@ namespace Demo.BL.Repositories
             _context.Remove(entity);
         }
 
-        public T Get(int id)
-            => _context.Set<T>().Find(id);
+        public async Task<T> Get(int id)
+            => await _context.Set<T>().FindAsync(id);
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
             if (typeof(T) == typeof(Employee))
-                return (IEnumerable<T>)_context.Employees.Include(e => e.Department).ToList();
-            return _context.Set<T>().ToList();
+                return (IEnumerable<T>)await _context.Employees.Include(e => e.Department).ToListAsync();
+            return await _context.Set<T>().ToListAsync();
         }
 
         public void Update(T entity)

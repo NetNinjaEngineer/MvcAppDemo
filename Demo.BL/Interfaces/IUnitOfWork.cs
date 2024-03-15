@@ -1,4 +1,6 @@
-﻿namespace Demo.BL.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Demo.BL.Interfaces
 {
     public interface IUnitOfWork
     {
@@ -6,6 +8,6 @@
 
         public IDepartmentRepository DepartmentRepository { get; set; }
 
-        int SaveChanges();
+        Task<int> SaveChanges();
     }
 }

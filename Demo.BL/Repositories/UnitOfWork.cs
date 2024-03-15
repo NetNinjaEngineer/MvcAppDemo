@@ -1,6 +1,7 @@
 ﻿using Demo.BL.Interfaces;
 using Demo.DAL.Context;
 using System;
+using System.Threading.Tasks;
 
 namespace Demo.BL.Repositories
 {
@@ -20,6 +21,6 @@ namespace Demo.BL.Repositories
 
         public void Dispose() => _context.Dispose();
 
-        public int SaveChanges() => _context.SaveChanges();
+        public async Task<int> SaveChanges() => await _context.SaveChangesAsync();
     }
 }
