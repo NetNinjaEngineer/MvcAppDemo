@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Demo.DAL.Context
 {
-    public class MvcAppG01DbContext : IdentityDbContext
+    public class MvcAppG01DbContext : IdentityDbContext<ApplicationUser>
     {
         public MvcAppG01DbContext(DbContextOptions<MvcAppG01DbContext> options) : base(options) { }
 
