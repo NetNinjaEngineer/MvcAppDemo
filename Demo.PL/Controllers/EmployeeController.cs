@@ -3,6 +3,7 @@ using Demo.BL.Interfaces;
 using Demo.DAL.Models;
 using Demo.PL.Helpers;
 using Demo.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IMapper mapper;
@@ -30,22 +32,41 @@ namespace Demo.PL.Controllers
             else
                 employees = unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
 
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["AgeSortParm"] = sortOrder == "Age" ? "age_desc" : "Age";
+            ViewData[Constants.NameSortParam] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData[Constants.AgeSortParam] = sortOrder == "Age" ? "age_desc" : "Age";
+            ViewData[Constants.SalarySortParam] = sortOrder == "Salary" ? "salary_desc" : "salary";
+            ViewData[Constants.EmailSortParam] = sortOrder == "Email" ? "email_desc" : "email";
+            ViewData[Constants.AddressSortParam] = sortOrder == "Address" ? "address_desc" : "address";
+            ViewData[Constants.HireDateSortParam] = sortOrder == "HireDate" ? "hireDate_desc" : "hireDate";
 
+            employees = Sort(sortOrder, employees);
+
+            ViewData["Message"] = "Hello from viewData";
+            ViewBag.Message = "Hello from viewBag";
+
+            IEnumerable<EmployeeViewModel> mappedEmployeesVM = mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
+            return View(mappedEmployeesVM);
+        }
+
+        private static IEnumerable<Employee> Sort(string sortOrder, IEnumerable<Employee> employees)
+        {
             employees = sortOrder switch
             {
                 "name_desc" => employees.OrderByDescending(e => e.Name),
                 "age_desc" => employees.OrderByDescending(e => e.Age),
+                "Age" => employees.OrderBy(e => e.Age),
+                "salary" => employees.OrderBy(e => e.Salary),
+                "salary_desc" => employees.OrderByDescending(e => e.Salary),
+                "address" => employees.OrderBy(e => e.Address),
+                "address_desc" => employees.OrderByDescending(e => e.Address),
+                "email" => employees.OrderBy(e => e.Address),
+                "email_desc" => employees.OrderByDescending(e => e.Address),
+                "hireDate_desc" => employees.OrderByDescending(e => e.HireDate),
+                "hireDate" => employees.OrderBy(e => e.HireDate),
                 _ => employees.OrderBy(e => e.Name),
             };
-            ViewData["Message"] = "Hello from viewData";
-            ViewBag.Message = "Hello from viewBag";
-
-            var mappedEmployeesVM = mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
-            return View(mappedEmployeesVM);
+            return employees;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Create()

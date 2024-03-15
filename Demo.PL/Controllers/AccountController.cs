@@ -1,11 +1,13 @@
 ﻿using Demo.DAL.Models;
 using Demo.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Demo.PL.Controllers
 {
+	[AllowAnonymous]
 	public class AccountController : Controller
 	{
 		private readonly UserManager<ApplicationUser> _userManager;

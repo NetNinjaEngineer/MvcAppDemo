@@ -1,8 +1,12 @@
 ﻿@model IEnumerable<EmployeeViewModel>
 @{
     ViewData["Title"] = "Index";
-    var nameSortParam = ViewData["NameSortParm"] as string;
-    var ageSortParam = ViewData["AgeSortParm"] as string;
+    var nameSortParam = ViewData[Constants.NameSortParam] as string;
+    var ageSortParam = ViewData[Constants.AgeSortParam] as string;
+    var salarySortParam = ViewData[Constants.SalarySortParam] as string;
+    var addressSortParam = ViewData[Constants.AddressSortParam] as string;
+    var emailSortParam = ViewData[Constants.EmailSortParam] as string;
+    var hireDateSortParam = ViewData[Constants.HireDateSortParam] as string;
 }
 
 @{
@@ -43,18 +47,26 @@
             <tr>
                 <td>@Html.DisplayNameFor(d => d.Image)</td>
                 <td>
-                    <a asp-action="Index" name="sortOrder" asp-route-sortOrder="@nameSortParam">@Html.DisplayNameFor(d => d.Name)</a>
+                    <a asp-action="Index" asp-route-sortOrder="@nameSortParam">@Html.DisplayNameFor(d => d.Name)</a>
                 </td>
-                <td>@Html.DisplayNameFor(d => d.Address)</td>
                 <td>
-                    <a asp-action="Index" name="sortOrder" asp-route-sortOrder="@ageSortParam">@Html.DisplayNameFor(d => d.Age)</a>
+                    <a asp-action="Index" asp-route-sortOrder="@addressSortParam">@Html.DisplayNameFor(d => d.Address)</a>
                 </td>
-                <td>@Html.DisplayNameFor(d => d.Salary)</td>
+                <td>
+                    <a asp-action="Index" asp-route-sortOrder="@ageSortParam">@Html.DisplayNameFor(d => d.Age)</a>
+                </td>
+                <td>
+                    <a asp-action="Index" asp-route-sortOrder="@salarySortParam">@Html.DisplayNameFor(d => d.Salary)</a>
+                </td>
                 <td>@Html.DisplayNameFor(d => d.Department)</td>
-                <td>@Html.DisplayNameFor(d => d.Email)</td>
+                <td>
+                    <a asp-action="Index" asp-route-sortOrder="@emailSortParam">@Html.DisplayNameFor(d => d.Email)</a>
+                </td>
                 <td>@Html.DisplayNameFor(d => d.PhoneNumber)</td>
                 <td>@Html.DisplayNameFor(d => d.IsActive)</td>
-                <td>@Html.DisplayNameFor(d => d.HireDate)</td>
+                <td>
+                    <a asp-action="Index" asp-route-sortOrder="@hireDateSortParam">@Html.DisplayNameFor(d => d.HireDate)</a>
+                </td>
 @*                 <td>@Html.DisplayNameFor(d => d.CreatedAt)</td> *@
                 <td>Details</td>
                 <td>Update</td>
