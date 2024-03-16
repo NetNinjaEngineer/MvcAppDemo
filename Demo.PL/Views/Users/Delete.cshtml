@@ -1,0 +1,11 @@
+﻿@model UserViewModel
+@{
+    var fullName = string.Concat(Model.FName, ' ', Model.LName);
+}
+
+<div> Are you sure to delete @fullName ?</div>
+<form asp-action="Delete">
+    <partial name="PartialViews/_DeleteDetailsPartialView" />
+    <input class="btn btn-danger" type="submit" value="Delete"/> |
+    <a asp-action="Index" class="btn btn-light">Back To List</a>
+</form>

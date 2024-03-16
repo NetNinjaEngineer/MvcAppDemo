@@ -109,5 +109,39 @@ namespace Demo.PL.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            return await Details(id, "Delete");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id, UserViewModel model)
+        {
+            if (id != model.Id)
+                return BadRequest();
+            try
+            {
+                ApplicationUser applicationUserToDelete = await userManager.FindByIdAsync(id);
+                if (applicationUserToDelete != null)
+                {
+                    IdentityResult result = await userManager.DeleteAsync(applicationUserToDelete);
+                    if (result.Succeeded)
+                    {
+                        TempData["SuccessMessage"] = "User Deleted Successfully.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return View(model);
+        }
+
     }
 }
