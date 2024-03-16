@@ -129,7 +129,7 @@ namespace Demo.PL.Controllers
                     IdentityResult result = await userManager.DeleteAsync(applicationUserToDelete);
                     if (result.Succeeded)
                     {
-                        TempData["SuccessMessage"] = "User Deleted Successfully.";
+                        TempData["SuccessMessageUser"] = "User Deleted Successfully.";
                         return RedirectToAction(nameof(Index));
                     }
                 }

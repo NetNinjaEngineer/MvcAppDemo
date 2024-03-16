@@ -1,7 +1,9 @@
 ﻿setTimeout(function () {
     let successMessage = document.querySelector(".successMessage");
-    if (successMessage) {
+    let sucessMessageUser = document.querySelector(".successMessageUser");
+    if (successMessage || sucessMessageUser) {
         successMessage.style.display = 'none';
+        sucessMessageUser.style.display = 'none';
     }
 }, 5000);
 

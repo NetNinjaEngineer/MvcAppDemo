@@ -5,16 +5,15 @@
 }
 
 @{
-    var sucessMessage = TempData["SuccessMessage"] as string;
+    var sucessMessageUser = TempData["SuccessMessageUser"] as string;
 }
 
-@if (sucessMessage is not null)
+@if (sucessMessageUser is not null)
 {
-    <div class="alert alert-success successMessage">
-        @sucessMessage
+    <div class="alert alert-success successMessageUser">
+        @sucessMessageUser
     </div>
 }
-
 
 @if (Model.Count() > 0)
 {

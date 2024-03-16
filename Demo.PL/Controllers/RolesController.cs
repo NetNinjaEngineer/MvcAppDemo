@@ -58,6 +58,10 @@ namespace Demo.PL.Controllers
                 try
                 {
                     IdentityRole mappedRole = _mapper.Map<RoleViewModel, IdentityRole>(model);
+                    if (await _roleManager.RoleExistsAsync(mappedRole.Name))
+                    {
+                        ModelState.AddModelError(string.Empty, "Role exists !!!");
+                    }
                     IdentityResult result = await _roleManager.CreateAsync(mappedRole);
                     if (result.Succeeded)
                         return RedirectToAction(nameof(Index));
