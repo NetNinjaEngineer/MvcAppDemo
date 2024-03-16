@@ -1,0 +1,13 @@
+﻿@model RoleViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Edit">
+    <input hidden asp-for="RoleId" />
+    <partial name="PartialViews/_CreateEditPartialView" />
+    <input class="btn btn-warning" type="submit" value="Save" /> |
+    <a asp-action="Index" class="btn btn-light">Back To List</a>
+</form>
