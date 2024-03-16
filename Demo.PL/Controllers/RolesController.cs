@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -74,18 +73,83 @@ namespace Demo.PL.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> Details([FromRoute] string id, string viewName = "Details")
+        public async Task<IActionResult> Details(string id, string viewName = "Details")
         {
             if (id is null)
                 return BadRequest();
 
-            var role = await _roleManager.FindByIdAsync(id);
+            IdentityRole role = await _roleManager.FindByIdAsync(id);
             if (role is null)
                 return NotFound();
 
-            var mappedRole = _mapper.Map<IdentityRole, RoleViewModel>(role);
+            RoleViewModel mappedRole = _mapper.Map<IdentityRole, RoleViewModel>(role);
             return View(viewName, mappedRole);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            return await Details(id, "Edit");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([FromRoute] string id, RoleViewModel model)
+        {
+            if (model.RoleId != id)
+                return BadRequest();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    IdentityRole role = await _roleManager.FindByIdAsync(model.RoleId);
+                    role.Name = model.RoleName;
+                    await _roleManager.UpdateAsync(role);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+
+            return View(model);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            return await Details(id, "Delete");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id, UserViewModel model)
+        {
+            if (id != model.Id)
+                return BadRequest();
+            try
+            {
+                IdentityRole role = await _roleManager.FindByIdAsync(id);
+                if (role != null)
+                {
+                    IdentityResult result = await _roleManager.DeleteAsync(role);
+                    if (result.Succeeded)
+                    {
+                        TempData["SuccessMessage"] = "Role Deleted Successfully.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return View(model);
         }
 
     }
