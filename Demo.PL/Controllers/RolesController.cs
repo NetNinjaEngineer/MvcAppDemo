@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -42,5 +44,49 @@ namespace Demo.PL.Controllers
                 return View(new List<RoleViewModel> { mappedRole });
             }
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(RoleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    IdentityRole mappedRole = _mapper.Map<RoleViewModel, IdentityRole>(model);
+                    IdentityResult result = await _roleManager.CreateAsync(mappedRole);
+                    if (result.Succeeded)
+                        return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+
+            }
+
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Details([FromRoute] string id, string viewName = "Details")
+        {
+            if (id is null)
+                return BadRequest();
+
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role is null)
+                return NotFound();
+
+            var mappedRole = _mapper.Map<IdentityRole, RoleViewModel>(role);
+            return View(viewName, mappedRole);
+        }
+
     }
 }
